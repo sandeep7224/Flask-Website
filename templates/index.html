@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+% extends "base.html" %}
 
 {% block content %}
     <div class="container-fluid mt-4">
@@ -12,8 +12,11 @@
                             {{ tts_form.text.label(class="form-label") }}
                             {{ tts_form.text(class="form-control") }}
                         </div>
-                        <input type="hidden" name="tts_form" value="tts_form">
-                        {{ tts_form.submit(class="btn btn-primary") }}
+                        <div class="form-group">
+                            {{ tts_form.language.label(class="form-label") }}
+                            {{ tts_form.language(class="form-control") }}
+                        </div>
+                        {{ tts_form.submit_tts(class="btn btn-primary") }}
                     </form>
                     {% if audio_data %}
                         <audio controls class="mt-3">
@@ -36,8 +39,7 @@
                             {{ stt_form.audio.label(class="form-label") }}
                             {{ stt_form.audio(class="form-control-file") }}
                         </div>
-                        <input type="hidden" name="stt_form" value="stt_form">
-                        {{ stt_form.submit(class="btn btn-primary") }}
+                        {{ stt_form.submit_stt(class="btn btn-primary") }}
                     </form>
                     {% if transcript %}
                         <h3>Transcript:</h3>
@@ -63,8 +65,7 @@
                             {{ translation_form.language.label(class="form-label") }}
                             {{ translation_form.language(class="form-control") }}
                         </div>
-                        <input type="hidden" name="translation_form" value="translation_form">
-                        {{ translation_form.submit(class="btn btn-primary") }}
+                        {{ translation_form.submit_translation(class="btn btn-primary") }}
                     </form>
                     {% if translated_text %}
                         <h3>Translated Text:</h3>
