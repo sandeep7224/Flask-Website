@@ -13,11 +13,22 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 
 class TextToSpeechForm(FlaskForm):
     text = TextAreaField('Enter Text', validators=[DataRequired()])
-    submit = SubmitField('Convert to Speech')
+    language = SelectField('Select Language', choices=[
+        ('en', 'English'),
+        ('es', 'Spanish'),
+        ('fr', 'French'),
+        ('de', 'German'),
+        ('zh-cn', 'Chinese Simplified'),
+        ('hi', 'Hindi'),
+        ('ja', 'Japanese'),
+        ('ko', 'Korean')
+        # Add more languages as needed
+    ], validators=[DataRequired()])
+    submit_tts = SubmitField('Convert to Speech')
 
 class SpeechToTextForm(FlaskForm):
     audio = FileField('Upload Audio File', validators=[DataRequired()])
-    submit = SubmitField('Convert to Text')
+    submit_stt = SubmitField('Convert to Text')
 
 class TextTranslationForm(FlaskForm):
     text = TextAreaField('Enter Text', validators=[DataRequired()])
@@ -26,13 +37,13 @@ class TextTranslationForm(FlaskForm):
         ('es', 'Spanish'),
         ('fr', 'French'),
         ('de', 'German'),
-        ('zh-cn', 'Chinese Simplified'),  # Example: Chinese Simplified
-        ('hi', 'Hindi'),                  # Example: Hindi
-        ('ja', 'Japanese'),               # Example: Japanese
-        ('ko', 'Korean')                  # Example: Korean
+        ('zh-cn', 'Chinese Simplified'),
+        ('hi', 'Hindi'),
+        ('ja', 'Japanese'),
+        ('ko', 'Korean')
         # Add more languages as needed
     ], validators=[DataRequired()])
-    submit = SubmitField('Translate')
+    submit_translation = SubmitField('Translate')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -47,14 +58,22 @@ def index():
     stt_error = None
     translation_error = None
 
-    if tts_form.validate_on_submit() and 'tts_form' in request.form:
+    if tts_form.validate_on_submit() and tts_form.submit_tts.data:
         text = tts_form.text.data
-        tts = gTTS(text=text, lang='en')
-        mp3_fp = BytesIO()
-        tts.write_to_fp(mp3_fp)
-        mp3_fp.seek(0)
-        audio_data = base64.b64encode(mp3_fp.read()).decode('utf-8')
-    elif stt_form.validate_on_submit() and 'stt_form' in request.form:
+        language = tts_form.language.data
+        translator = Translator()
+        try:
+            translated = translator.translate(text, dest=language)
+            translated_text = translated.text
+            tts = gTTS(text=translated_text, lang=language)
+            mp3_fp = BytesIO()
+            tts.write_to_fp(mp3_fp)
+            mp3_fp.seek(0)
+            audio_data = base64.b64encode(mp3_fp.read()).decode('utf-8')
+        except Exception as e:
+            tts_error = f"Text to speech error: {str(e)}"
+
+    elif stt_form.validate_on_submit() and stt_form.submit_stt.data:
         audio_file = stt_form.audio.data
         recognizer = sr.Recognizer()
         with sr.AudioFile(audio_file) as source:
@@ -65,7 +84,10 @@ def index():
                 stt_error = "Could not understand audio"
             except sr.RequestError:
                 stt_error = "Could not request results; check your network connection"
-    elif translation_form.validate_on_submit() and 'translation_form' in request.form:
+            except Exception as e:
+                stt_error = f"Error: {str(e)}"
+
+    elif translation_form.validate_on_submit() and translation_form.submit_translation.data:
         text = translation_form.text.data
         language = translation_form.language.data
         translator = Translator()
@@ -81,3 +103,4 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
