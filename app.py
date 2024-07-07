@@ -101,6 +101,3 @@ def index():
                            audio_data=audio_data, transcript=transcript, translated_text=translated_text,
                            tts_error=tts_error, stt_error=stt_error, translation_error=translation_error)
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
