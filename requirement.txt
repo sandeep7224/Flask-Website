@@ -1,0 +1,7 @@
+Flask
+Flask-WTF
+WTForms
+SpeechRecognition
+gTTS
+googletrans
+Werkzeug
