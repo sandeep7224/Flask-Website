@@ -1,7 +1,0 @@
-Flask
-Flask-WTF
-WTForms
-SpeechRecognition
-gTTS
-googletrans
-werkzueg
