@@ -1,4 +1,4 @@
-% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
     <div class="container-fluid mt-4">
@@ -9,12 +9,12 @@
                     <form method="POST" action="{{ url_for('index') }}" id="tts_form">
                         {{ tts_form.hidden_tag() }}
                         <div class="form-group">
-                            {{ tts_form.text.label(class="form-label") }}
-                            {{ tts_form.text(class="form-control") }}
+                            {{ tts_form.text_to_translate.label(class="form-label") }}
+                            {{ tts_form.text_to_translate(class="form-control") }}
                         </div>
                         <div class="form-group">
-                            {{ tts_form.language.label(class="form-label") }}
-                            {{ tts_form.language(class="form-control") }}
+                            {{ tts_form.text_to_speech_language.label(class="form-label") }}
+                            {{ tts_form.text_to_speech_language(class="form-control") }}
                         </div>
                         {{ tts_form.submit_tts(class="btn btn-primary") }}
                     </form>
